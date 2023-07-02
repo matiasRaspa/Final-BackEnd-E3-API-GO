@@ -1,8 +1,8 @@
 package store
 
 import (
-	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/domain"
 	"database/sql"
+	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/domain"
 )
 
 type SqlStore struct {

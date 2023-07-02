@@ -1,10 +1,10 @@
 package dentist
 
 import (
-	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/domain"
-	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/store"
-	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/web"
 	"fmt"
+	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/domain"
+	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/store/dentist"
+	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/web"
 )
 
 type IRepository interface {
