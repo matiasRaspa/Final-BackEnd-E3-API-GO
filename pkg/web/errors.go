@@ -2,6 +2,7 @@ package web
 
 import "net/http"
 
+// ErrorApi represents an API error.
 type ErrorApi struct {
 	Status  int    `json:"status"`
 	Code    string `json:"code"`

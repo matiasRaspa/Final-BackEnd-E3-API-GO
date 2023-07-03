@@ -8,6 +8,7 @@ import (
 	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/web"
 )
 
+// Authentication middleware validates the token in the request header.
 func Authentication() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.GetHeader("TOKEN")
