@@ -2,12 +2,16 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/cmd/server/handler"
 	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/appointment"
 	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/dentist"
 	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/patient"
+	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/middleware"
 	appointmentStore "github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/store/appointment"
 	dentistStore "github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/store/dentist"
 	patientStore "github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/store/patient"
@@ -17,6 +21,13 @@ import (
 )
 
 func main() {
+
+	if err := godotenv.Load("./cmd/.env"); err != nil {
+		panic("Error loading .env file: " + err.Error())
+	}
+
+	password := os.Getenv("TOKEN")
+	fmt.Println(password)
 
 	connectionString := "root:root@tcp(localhost:3306)/dental_clinic_db"
 
@@ -54,20 +65,20 @@ func main() {
 	{
 		dentists.GET("", dentistHandler.ListDentists)
 		dentists.GET(":id", dentistHandler.GetDentistById)
-		dentists.POST("", dentistHandler.MakeDentist)
-		dentists.PUT(":id", dentistHandler.UpdateDentistById)
-		dentists.PATCH(":id", dentistHandler.UpdateLicenseById)
-		dentists.DELETE(":id", dentistHandler.DeleteDentistById)
+		dentists.POST("", middleware.Authentication(), dentistHandler.MakeDentist)
+		dentists.PUT(":id", middleware.Authentication(), dentistHandler.UpdateDentistById)
+		dentists.PATCH(":id", middleware.Authentication(), dentistHandler.UpdateLicenseById)
+		dentists.DELETE(":id", middleware.Authentication(), dentistHandler.DeleteDentistById)
 	}
 
 	patients := r.Group("/patients")
 	{
 		patients.GET("", patientHandler.ListPatients)
 		patients.GET(":id", patientHandler.GetPatientById)
-		patients.POST("", patientHandler.MakePatient)
-		patients.PUT(":id", patientHandler.UpdatePatientById)
-		patients.PATCH(":id", patientHandler.UpdateAddressById)
-		patients.DELETE(":id", patientHandler.DeletePatientById)
+		patients.POST("", middleware.Authentication(), patientHandler.MakePatient)
+		patients.PUT(":id", middleware.Authentication(), patientHandler.UpdatePatientById)
+		patients.PATCH(":id", middleware.Authentication(), patientHandler.UpdateAddressById)
+		patients.DELETE(":id", middleware.Authentication(), patientHandler.DeletePatientById)
 	}
 
 	appointments := r.Group("/appointments")
@@ -75,11 +86,11 @@ func main() {
 		appointments.GET("", appointmentHandler.ListAppointments)
 		appointments.GET(":id", appointmentHandler.GetAppointmentById)
 		appointments.GET("/patient", appointmentHandler.GetAppointmentByDni)
-		appointments.POST("", appointmentHandler.MakeAppointment)
-		appointments.POST("/register", appointmentHandler.MakeAppointmentByDniAndLicense)
-		appointments.PUT(":id", appointmentHandler.UpdateAppointmentById)
-		appointments.PATCH(":id", appointmentHandler.UpdateDateTimeById)
-		appointments.DELETE(":id", appointmentHandler.DeleteAppointmentById)
+		appointments.POST("", middleware.Authentication(), appointmentHandler.MakeAppointment)
+		appointments.POST("/register", middleware.Authentication(), appointmentHandler.MakeAppointmentByDniAndLicense)
+		appointments.PUT(":id", middleware.Authentication(), appointmentHandler.UpdateAppointmentById)
+		appointments.PATCH(":id", middleware.Authentication(), appointmentHandler.UpdateDateTimeById)
+		appointments.DELETE(":id", middleware.Authentication(), appointmentHandler.DeleteAppointmentById)
 	}
 
 	r.Run(":8080")
