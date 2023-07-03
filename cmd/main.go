@@ -5,8 +5,10 @@ import (
 	"net/http"
 
 	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/cmd/server/handler"
+	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/appointment"
 	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/dentist"
 	"github.com/matiasRaspa/Final-BackEnd-E3-API-GO/internal/patient"
+	appointmentStore "github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/store/appointment"
 	dentistStore "github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/store/dentist"
 	patientStore "github.com/matiasRaspa/Final-BackEnd-E3-API-GO/pkg/store/patient"
 
@@ -38,6 +40,11 @@ func main() {
 	servicePatient := patient.Service{Repository: &repoPatient}
 	patientHandler := handler.PatientHandler{PatientService: &servicePatient}
 
+	storageAppointment := appointmentStore.SqlStore{DB: db}
+	repoAppointment := appointment.Repository{Store: &storageAppointment}
+	serviceAppointment := appointment.Service{Repository: &repoAppointment}
+	appointmentHandler := handler.AppointmentHandler{AppointmentService: &serviceAppointment}
+
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "Welcome API!")
@@ -61,6 +68,18 @@ func main() {
 		patients.PUT(":id", patientHandler.UpdatePatientById)
 		patients.PATCH(":id", patientHandler.UpdateAddressById)
 		patients.DELETE(":id", patientHandler.DeletePatientById)
+	}
+
+	appointments := r.Group("/appointments")
+	{
+		appointments.GET("", appointmentHandler.ListAppointments)
+		appointments.GET(":id", appointmentHandler.GetAppointmentById)
+		appointments.GET("/patient", appointmentHandler.GetAppointmentByDni)
+		appointments.POST("", appointmentHandler.MakeAppointment)
+		appointments.POST("/register", appointmentHandler.MakeAppointmentByDniAndLicense)
+		appointments.PUT(":id", appointmentHandler.UpdateAppointmentById)
+		appointments.PATCH(":id", appointmentHandler.UpdateDateTimeById)
+		appointments.DELETE(":id", appointmentHandler.DeleteAppointmentById)
 	}
 
 	r.Run(":8080")
