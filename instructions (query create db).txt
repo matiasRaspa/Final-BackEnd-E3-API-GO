@@ -1,0 +1,25 @@
+CREATE DATABASE dental_clinic_db;
+
+CREATE TABLE dentists (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  last_name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  license VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE patients (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    dni VARCHAR(20) NOT NULL UNIQUE,
+    admission_date DATE NOT NULL
+);
+
+CREATE TABLE appointments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id VARCHAR(255) NOT NULL,
+    dentist_id VARCHAR(255) NOT NULL,
+    date_time DATETIME NOT NULL,
+    description VARCHAR(255) NOT NULL
+);
