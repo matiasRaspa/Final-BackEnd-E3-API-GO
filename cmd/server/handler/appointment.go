@@ -15,6 +15,17 @@ type AppointmentHandler struct {
 	AppointmentService appointment.IService
 }
 
+// MakeAppointment godoc
+// @Summary Create a new appointment
+// @Description Create a new appointment with the provided data
+// @Tags appointments
+// @Accept json
+// @Produce json
+// @Param appointment body domain.Appointment true "Appointment object"
+// @Success 200 {object} domain.Appointment
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /appointments [post]
 func (h *AppointmentHandler) MakeAppointment(ctx *gin.Context) {
 	var appointment domain.Appointment
 	if err := ctx.ShouldBindJSON(&appointment); err != nil {
@@ -71,6 +82,17 @@ func (h *AppointmentHandler) MakeAppointment(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, appointment)
 }
 
+// MakeAppointmentByDniAndLicense godoc
+// @Summary Create a new appointment using patient's DNI and dentist's license
+// @Description Create a new appointment with the provided patient's DNI and dentist's license
+// @Tags appointments
+// @Accept json
+// @Produce json
+// @Param appointmentQuery body domain.AppointmentRegister true "Appointment query object"
+// @Success 200 {object} domain.Appointment
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /appointments/dni-license [post]
 func (h *AppointmentHandler) MakeAppointmentByDniAndLicense(ctx *gin.Context) {
 	var appointmentQuery domain.AppointmentRegister
 	if err := ctx.ShouldBindJSON(&appointmentQuery); err != nil {
@@ -130,6 +152,15 @@ func (h *AppointmentHandler) MakeAppointmentByDniAndLicense(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, appointment)
 }
 
+// GetAppointmentById godoc
+// @Summary Get an appointment by ID
+// @Description Get details of a specific appointment based on its ID
+// @Tags appointments
+// @Param id path int true "Appointment ID"
+// @Success 200 {object} domain.Appointment
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /appointments/{id} [get]
 func (h *AppointmentHandler) GetAppointmentById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -150,6 +181,15 @@ func (h *AppointmentHandler) GetAppointmentById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, appointmentFound)
 }
 
+// GetAppointmentByDni godoc
+// @Summary Get an appointment by patient's DNI
+// @Description Get details of a specific appointment based on the patient's DNI
+// @Tags appointments
+// @Param dni query string true "Patient's DNI"
+// @Success 200 {object} domain.AppointmentByDni
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /appointments/dni [get]
 func (h *AppointmentHandler) GetAppointmentByDni(ctx *gin.Context) {
 	dniQueryParam := ctx.Query("dni")
 
@@ -214,6 +254,15 @@ func (h *AppointmentHandler) GetAppointmentByDni(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, appointmentByDni)
 }
 
+// UpdateAppointmentById godoc
+// @Summary Update an appointment by ID
+// @Description Update a specific appointment based on its ID
+// @Tags appointments
+// @Param id path int true "Appointment ID"
+// @Success 200 {object} domain.Appointment
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /appointments/{id} [put]
 func (h *AppointmentHandler) UpdateAppointmentById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -250,6 +299,14 @@ func (h *AppointmentHandler) UpdateAppointmentById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, appointmentFound)
 }
 
+// UpdateDateTimeById godoc
+// @Summary Update the date and time of an appointment by ID
+// @Description Update the date and time of a specific appointment based on its ID
+// @Tags appointments
+// @Param id path int true "Appointment ID"
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /appointments/{id} [patch]
 func (h *AppointmentHandler) UpdateDateTimeById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -289,6 +346,14 @@ func (h *AppointmentHandler) UpdateDateTimeById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "appointment patched successfully"})
 }
 
+// DeleteAppointmentById godoc
+// @Summary Delete an appointment by ID
+// @Description Delete an appointment based on its ID
+// @Tags appointments
+// @Param id path int true "Appointment ID"
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /appointments/{id} [delete]
 func (h *AppointmentHandler) DeleteAppointmentById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -320,6 +385,14 @@ func (h *AppointmentHandler) DeleteAppointmentById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "appointment deleted successfully"})
 }
 
+// ListAppointments godoc
+// @Summary Get a list of appointments
+// @Description Retrieve a list of all appointments
+// @Tags appointments
+// @Produce json
+// @Success 200 {array} domain.Appointment
+// @Failure 500 {object} web.ErrorApi
+// @Router /appointments [get]
 func (h *AppointmentHandler) ListAppointments(ctx *gin.Context) {
 	appointments, err := h.AppointmentService.List()
 	if err != nil {

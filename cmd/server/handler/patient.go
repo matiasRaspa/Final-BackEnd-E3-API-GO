@@ -14,6 +14,16 @@ type PatientHandler struct {
 	PatientService patient.IService
 }
 
+// MakePatient creates a new patient.
+// @Summary Create a new patient
+// @Description Create a new patient
+// @Accept json
+// @Produce json
+// @Param patient body domain.Patient true "Patient object"
+// @Success 200 {object} domain.Patient
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /patients [post]
 func (h *PatientHandler) MakePatient(ctx *gin.Context) {
 	var patient domain.Patient
 	if err := ctx.ShouldBindJSON(&patient); err != nil {
@@ -34,6 +44,15 @@ func (h *PatientHandler) MakePatient(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, patient)
 }
 
+// GetPatientById retrieves a patient by ID.
+// @Summary Get a patient by ID
+// @Description Get a patient by ID
+// @Produce json
+// @Param id path int true "Patient ID"
+// @Success 200 {object} domain.Patient
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /patients/{id} [get]
 func (h *PatientHandler) GetPatientById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -54,6 +73,17 @@ func (h *PatientHandler) GetPatientById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, patientFound)
 }
 
+// UpdatePatientById updates a patient by ID.
+// @Summary Update a patient by ID
+// @Description Update a patient by ID
+// @Accept json
+// @Produce json
+// @Param id path int true "Patient ID"
+// @Param patient body domain.Patient true "Patient object"
+// @Success 200 {object} domain.Patient
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /patients/{id} [put]
 func (h *PatientHandler) UpdatePatientById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -90,6 +120,15 @@ func (h *PatientHandler) UpdatePatientById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, patientFound)
 }
 
+// UpdateAddressById updates the address of a patient by ID.
+// @Summary Update the address of a patient by ID
+// @Description Update the address of a patient by ID
+// @Accept json
+// @Produce json
+// @Param id path int true "Patient ID"
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /patients/{id} [patch]
 func (h *PatientHandler) UpdateAddressById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -129,6 +168,14 @@ func (h *PatientHandler) UpdateAddressById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "patient patched successfully"})
 }
 
+// DeletePatientById deletes a patient by ID.
+// @Summary Delete a patient by ID
+// @Description Delete a patient by ID
+// @Produce json
+// @Param id path int true "Patient ID"
+// @Failure 400 {object} web.ErrorApi
+// @Failure 500 {object} web.ErrorApi
+// @Router /patients/{id} [delete]
 func (h *PatientHandler) DeletePatientById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -160,6 +207,13 @@ func (h *PatientHandler) DeletePatientById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "patient deleted successfully"})
 }
 
+// ListPatients retrieves the list of patients.
+// @Summary Get the list of patients
+// @Description Get the list of patients
+// @Produce json
+// @Success 200 {array} domain.Patient
+// @Failure 500 {object} web.ErrorApi
+// @Router /patients [get]
 func (h *PatientHandler) ListPatients(ctx *gin.Context) {
 	patients, err := h.PatientService.List()
 	if err != nil {

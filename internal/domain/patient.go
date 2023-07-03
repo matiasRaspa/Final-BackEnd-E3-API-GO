@@ -1,5 +1,6 @@
 package domain
 
+// Patient represents a patient.
 type Patient struct {
 	Id            int64  `json:"id"`
 	Name          string `json:"name" binding:"required"`

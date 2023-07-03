@@ -1,0 +1,575 @@
+basePath: /
+definitions:
+  domain.Appointment:
+    properties:
+      date_time:
+        type: string
+      dentist_id:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      patient_id:
+        type: integer
+    required:
+    - dentist_id
+    - patient_id
+    type: object
+  domain.AppointmentByDni:
+    properties:
+      date_time:
+        type: string
+      dentist:
+        $ref: '#/definitions/domain.Dentist'
+      description:
+        type: string
+      id:
+        type: integer
+      patient:
+        $ref: '#/definitions/domain.Patient'
+    type: object
+  domain.AppointmentRegister:
+    properties:
+      description:
+        type: string
+      dni_patient:
+        type: string
+      license_dentist:
+        type: string
+    required:
+    - dni_patient
+    - license_dentist
+    type: object
+  domain.Dentist:
+    properties:
+      id:
+        type: integer
+      last_name:
+        type: string
+      license:
+        type: string
+      name:
+        type: string
+    required:
+    - last_name
+    - license
+    - name
+    type: object
+  domain.Patient:
+    properties:
+      address:
+        type: string
+      admission_date:
+        type: string
+      dni:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      name:
+        type: string
+    required:
+    - address
+    - dni
+    - last_name
+    - name
+    type: object
+  web.ErrorApi:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for managing dentists, patients, and appointments
+  title: Dental Clinic API
+  version: "1.0"
+paths:
+  /appointments:
+    get:
+      description: Retrieve a list of all appointments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Appointment'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get a list of appointments
+      tags:
+      - appointments
+    post:
+      consumes:
+      - application/json
+      description: Create a new appointment with the provided data
+      parameters:
+      - description: Appointment object
+        in: body
+        name: appointment
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Appointment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Create a new appointment
+      tags:
+      - appointments
+  /appointments/{id}:
+    delete:
+      description: Delete an appointment based on its ID
+      parameters:
+      - description: Appointment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Delete an appointment by ID
+      tags:
+      - appointments
+    get:
+      description: Get details of a specific appointment based on its ID
+      parameters:
+      - description: Appointment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get an appointment by ID
+      tags:
+      - appointments
+    patch:
+      description: Update the date and time of a specific appointment based on its
+        ID
+      parameters:
+      - description: Appointment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update the date and time of an appointment by ID
+      tags:
+      - appointments
+    put:
+      description: Update a specific appointment based on its ID
+      parameters:
+      - description: Appointment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update an appointment by ID
+      tags:
+      - appointments
+  /appointments/dni:
+    get:
+      description: Get details of a specific appointment based on the patient's DNI
+      parameters:
+      - description: Patient's DNI
+        in: query
+        name: dni
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.AppointmentByDni'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get an appointment by patient's DNI
+      tags:
+      - appointments
+  /appointments/dni-license:
+    post:
+      consumes:
+      - application/json
+      description: Create a new appointment with the provided patient's DNI and dentist's
+        license
+      parameters:
+      - description: Appointment query object
+        in: body
+        name: appointmentQuery
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AppointmentRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Create a new appointment using patient's DNI and dentist's license
+      tags:
+      - appointments
+  /dentists:
+    get:
+      description: Get a list of dentists
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Dentist'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get a list of dentists
+    post:
+      consumes:
+      - application/json
+      description: Create a new dentist
+      parameters:
+      - description: Dentist object
+        in: body
+        name: dentist
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Dentist'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Create a new dentist
+  /dentists/{id}:
+    delete:
+      description: Delete a dentist by ID
+      parameters:
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Delete a dentist by ID
+    get:
+      description: Get a dentist by ID
+      parameters:
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get a dentist by ID
+    patch:
+      consumes:
+      - application/json
+      description: Update the license of a dentist by ID
+      parameters:
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update the license of a dentist by ID
+    put:
+      consumes:
+      - application/json
+      description: Update a dentist by ID
+      parameters:
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dentist object
+        in: body
+        name: dentist
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Dentist'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update a dentist by ID
+  /patients:
+    get:
+      description: Get the list of patients
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Patient'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get the list of patients
+    post:
+      consumes:
+      - application/json
+      description: Create a new patient
+      parameters:
+      - description: Patient object
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Patient'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Create a new patient
+  /patients/{id}:
+    delete:
+      description: Delete a patient by ID
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Delete a patient by ID
+    get:
+      description: Get a patient by ID
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get a patient by ID
+    patch:
+      consumes:
+      - application/json
+      description: Update the address of a patient by ID
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update the address of a patient by ID
+    put:
+      consumes:
+      - application/json
+      description: Update a patient by ID
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Patient object
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Patient'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update a patient by ID
+swagger: "2.0"
