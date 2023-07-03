@@ -16,6 +16,14 @@ func NewNotFoundApiError(message string) error {
 	return &ErrorApi{http.StatusNotFound, "not_found", message}
 }
 
+func NewNotFoundApiErrorSecurityEmpty(message string) error {
+	return &ErrorApi{http.StatusUnauthorized, "not_found_security", message}
+}
+
+func NewNotFoundApiErrorSecurityInvalid(message string) error {
+	return &ErrorApi{http.StatusUnauthorized, "not_found_security_invalid", message}
+}
+
 func NewBadRequestApiError(message string) error {
 	return &ErrorApi{http.StatusBadRequest, "bad_request", message}
 }
